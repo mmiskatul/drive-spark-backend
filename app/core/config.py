@@ -27,6 +27,11 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: str = "smtp-password"
     SMTP_FROM_EMAIL: str = "Drive Spark Rent <no-reply@example.com>"
 
+    CLOUDINARY_CLOUD_NAME: str | None = None
+    CLOUDINARY_API_KEY: str | None = None
+    CLOUDINARY_API_SECRET: str | None = None
+    CLOUDINARY_FOLDER: str = "drive-spark-rent/cars"
+
     ADMIN_EMAIL: str = "admin@drivenow.com"
     ADMIN_PASSWORD: str = "Admin@123456"
     ADMIN_NAME: str = "Admin User"

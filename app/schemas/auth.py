@@ -14,6 +14,10 @@ class UserRead(BaseModel):
     email_verified_at: datetime | None = None
 
 
+class UserProfileUpdate(BaseModel):
+    name: str = Field(min_length=1, max_length=120)
+
+
 class RegisterRequest(BaseModel):
     name: str = Field(min_length=1, max_length=120)
     email: EmailStr

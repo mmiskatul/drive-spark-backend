@@ -58,6 +58,18 @@ class CarRepository:
         await self.collection.update_one({"_id": ObjectId(car_id)}, {"$set": payload})
         return await self.get_by_id(car_id)
 
+    async def add_image_url(self, car_id: str, image_url: str) -> dict[str, Any] | None:
+        if not ObjectId.is_valid(car_id):
+            return None
+        await self.collection.update_one(
+            {"_id": ObjectId(car_id)},
+            {
+                "$addToSet": {"image_urls": image_url},
+                "$set": {"updated_at": datetime.now(UTC)},
+            },
+        )
+        return await self.get_by_id(car_id)
+
     async def delete(self, car_id: str) -> bool:
         if not ObjectId.is_valid(car_id):
             return False

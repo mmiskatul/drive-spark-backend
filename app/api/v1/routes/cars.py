@@ -1,14 +1,16 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, File, Query, UploadFile, status
 
 from app.api.dependencies import PartnerOrAdminDep, get_car_service
-from app.schemas.car import CarCreate, CarRead, CarUpdate
+from app.schemas.car import CarCreate, CarImageUploadRead, CarRead, CarUpdate
 from app.schemas.common import PaginatedResponse
 from app.services.car_service import CarService
+from app.services.cloudinary_service import upload_car_image
 
 router = APIRouter()
 CarServiceDep = Annotated[CarService, Depends(get_car_service)]
+ImageFileDep = Annotated[UploadFile, File()]
 
 
 @router.get("", response_model=PaginatedResponse[CarRead])
@@ -29,6 +31,16 @@ async def create_car(
 ) -> CarRead:
     partner_id = current_user.id if current_user.role == "partner" else None
     return await service.create_partner_car(payload, partner_id)
+
+
+@router.post("/images", response_model=CarImageUploadRead)
+async def upload_car_listing_image(
+    current_user: PartnerOrAdminDep,
+    file: ImageFileDep,
+) -> CarImageUploadRead:
+    del current_user
+    uploaded = await upload_car_image(file)
+    return CarImageUploadRead(url=uploaded.url, public_id=uploaded.public_id)
 
 
 @router.get("/mine", response_model=PaginatedResponse[CarRead])
@@ -64,6 +76,18 @@ async def update_car(
 ) -> CarRead:
     await service.assert_can_manage_car(car_id, current_user.id, current_user.role)
     return await service.update_car(car_id, payload)
+
+
+@router.post("/{car_id}/images", response_model=CarRead)
+async def upload_existing_car_image(
+    car_id: str,
+    service: CarServiceDep,
+    current_user: PartnerOrAdminDep,
+    file: ImageFileDep,
+) -> CarRead:
+    await service.assert_can_manage_car(car_id, current_user.id, current_user.role)
+    uploaded = await upload_car_image(file)
+    return await service.add_car_image(car_id, uploaded.url)
 
 
 @router.delete("/{car_id}", status_code=status.HTTP_204_NO_CONTENT)

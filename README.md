@@ -22,6 +22,7 @@ uvicorn app.main:app --reload
 
 Set `MONGODB_URI` to your MongoDB Atlas connection string in `.env`.
 Set `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `ADMIN_NAME` in `.env` for the admin account that is seeded when the API starts.
+Set `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET` to enable car image uploads.
 
 This folder is designed to be an independent backend project. You can initialize and push it separately:
 
@@ -58,8 +59,10 @@ The current scaffold includes production-ready health endpoints and a cars domai
 - `GET /api/v1/health`
 - `GET /api/v1/cars`
 - `POST /api/v1/cars`
+- `POST /api/v1/cars/images`
 - `GET /api/v1/cars/{car_id}`
 - `PATCH /api/v1/cars/{car_id}`
+- `POST /api/v1/cars/{car_id}/images`
 - `DELETE /api/v1/cars/{car_id}`
 
 OpenAPI docs are available at `/docs` outside production.
