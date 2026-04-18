@@ -37,6 +37,11 @@ class CarRepository:
     async def get_by_slug(self, slug: str) -> dict[str, Any] | None:
         return await self.collection.find_one({"slug": slug})
 
+    async def get_by_slug_excluding_id(self, slug: str, car_id: str) -> dict[str, Any] | None:
+        if not ObjectId.is_valid(car_id):
+            return await self.get_by_slug(slug)
+        return await self.collection.find_one({"slug": slug, "_id": {"$ne": ObjectId(car_id)}})
+
     async def create(self, payload: dict[str, Any]) -> dict[str, Any]:
         now = datetime.now(UTC)
         document = {**payload, "created_at": now, "updated_at": now}
