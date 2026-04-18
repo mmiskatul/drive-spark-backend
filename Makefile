@@ -1,4 +1,4 @@
-.PHONY: install install-dev dev lint test docker-build docker-up
+.PHONY: install install-dev seed-admin dev lint test docker-build docker-up
 
 install:
 	pip install -r requirements.txt
@@ -6,7 +6,11 @@ install:
 install-dev:
 	pip install -r requirements-dev.txt
 
+seed-admin:
+	python -m app.scripts.seed_admin
+
 dev:
+	python -m app.scripts.seed_admin
 	uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 lint:

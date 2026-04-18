@@ -21,6 +21,7 @@ uvicorn app.main:app --reload
 ```
 
 Set `MONGODB_URI` to your MongoDB Atlas connection string in `.env`.
+Set `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `ADMIN_NAME` in `.env` for the admin account that is seeded when the API starts.
 
 This folder is designed to be an independent backend project. You can initialize and push it separately:
 
@@ -38,6 +39,7 @@ git push -u origin main
 ```bash
 ruff check .
 pytest
+python -m app.scripts.seed_admin
 uvicorn app.main:app --host 0.0.0.0 --port 8000
 docker build -t drive-spark-rent-api .
 docker compose up --build

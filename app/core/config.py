@@ -27,6 +27,10 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: str = "smtp-password"
     SMTP_FROM_EMAIL: str = "Drive Spark Rent <no-reply@example.com>"
 
+    ADMIN_EMAIL: str = "admin@drivenow.com"
+    ADMIN_PASSWORD: str = "Admin@123456"
+    ADMIN_NAME: str = "Admin User"
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

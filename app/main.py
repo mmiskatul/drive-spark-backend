@@ -9,6 +9,7 @@ from app.core.exceptions import register_exception_handlers
 from app.core.logging import configure_logging
 from app.db.mongodb import close_mongo_connection, connect_to_mongo, create_indexes
 from app.middleware.request_id import RequestIdMiddleware
+from app.scripts.seed_admin import seed_admin
 
 
 @asynccontextmanager
@@ -16,6 +17,7 @@ async def lifespan(app: FastAPI):
     configure_logging()
     await connect_to_mongo(app)
     await create_indexes(app)
+    await seed_admin(app.state.mongo_db)
     yield
     await close_mongo_connection(app)
 
