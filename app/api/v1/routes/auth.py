@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException, Request, Response, status
 from pymongo.errors import DuplicateKeyError
 
 from app.api.dependencies import DatabaseDep
+from app.api.dependencies import CurrentUserDep
 from app.core.config import settings
 from app.core.email import send_verification_email
 from app.core.security import (
@@ -24,6 +25,7 @@ from app.schemas.auth import (
     RegisterRequest,
     ResendVerificationRequest,
     UserRead,
+    UserProfileUpdate,
     VerifyEmailRequest,
 )
 
@@ -331,6 +333,30 @@ async def refresh(request: Request, response: Response, db: DatabaseDep) -> Auth
         path="/",
     )
     return AuthResponse(user=serialize_user(user), access_token=access_token)
+
+
+@router.get("/me", response_model=UserRead)
+async def get_me(current_user: CurrentUserDep) -> UserRead:
+    return current_user
+
+
+@router.patch("/me", response_model=UserRead)
+async def update_me(
+    payload: UserProfileUpdate,
+    current_user: CurrentUserDep,
+    db: DatabaseDep,
+) -> UserRead:
+    now = utc_now()
+    await db.users.update_one(
+        {"_id": ObjectId(current_user.id)},
+        {"$set": {"name": payload.name.strip(), "updated_at": now}},
+    )
+    user = await db.users.find_one({"_id": ObjectId(current_user.id)})
+
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")
+
+    return serialize_user(user)
 
 
 @router.post("/logout", response_model=MessageResponse)
