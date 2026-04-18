@@ -17,6 +17,7 @@ class CarBase(BaseModel):
     transmission: str = Field(min_length=2, max_length=40)
     fuel: str = Field(min_length=2, max_length=40)
     features: list[str] = Field(default_factory=list)
+    image_urls: list[str] = Field(default_factory=list)
     description: str | None = Field(default=None, max_length=2000)
 
 
@@ -37,6 +38,7 @@ class CarUpdate(BaseModel):
     fuel: str | None = Field(default=None, min_length=2, max_length=40)
     status: CarStatus | None = None
     features: list[str] | None = None
+    image_urls: list[str] | None = None
     description: str | None = Field(default=None, max_length=2000)
 
 
@@ -46,3 +48,8 @@ class CarRead(CarBase):
     status: CarStatus
     created_at: datetime
     updated_at: datetime
+
+
+class CarImageUploadRead(BaseModel):
+    url: str
+    public_id: str

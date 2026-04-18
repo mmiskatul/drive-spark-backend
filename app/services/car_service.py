@@ -126,6 +126,12 @@ class CarService:
         if not deleted:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Car not found")
 
+    async def add_car_image(self, car_id: str, image_url: str) -> CarRead:
+        document = await self.repository.add_image_url(car_id, image_url)
+        if document is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Car not found")
+        return self._to_read_model(document)
+
     @staticmethod
     def _to_read_model(document: dict) -> CarRead:
         document = {**document, "id": str(document["_id"])}
