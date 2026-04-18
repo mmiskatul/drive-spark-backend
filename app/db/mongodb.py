@@ -20,6 +20,12 @@ async def create_indexes(app: FastAPI) -> None:
     await db.cars.create_index([("title", TEXT), ("brand", TEXT), ("location", TEXT)])
     await db.cars.create_index([("status", ASCENDING), ("price_per_day", ASCENDING)])
     await db.users.create_index([("email", ASCENDING)], unique=True)
+    await db.pending_registrations.create_index([("email", ASCENDING)], unique=True)
+    await db.pending_registrations.create_index([("expires_at", ASCENDING)])
+    await db.email_verification_tokens.create_index([("token_hash", ASCENDING)], unique=True)
+    await db.email_verification_tokens.create_index([("user_id", ASCENDING)])
+    await db.refresh_tokens.create_index([("token_hash", ASCENDING)], unique=True)
+    await db.refresh_tokens.create_index([("user_id", ASCENDING)])
 
 
 async def close_mongo_connection(app: FastAPI) -> None:
